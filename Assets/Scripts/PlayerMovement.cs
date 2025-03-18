@@ -149,20 +149,22 @@ public class PlayerMovement : MonoBehaviour
     {
         if (ctx.performed && canDash && dashUp)
         {
+            float currentVelocity = rb.linearVelocity.x;
             canDash = false;
             dashUp = false;
             isDashing = true;
             rb.useGravity = false;
             rb.linearVelocity = new Vector2(horizontalMovement * dashingPower, 0f);
-            StartCoroutine(DashCooldown());
+            StartCoroutine(DashCooldown(currentVelocity));
         }
     }
 
-    private IEnumerator DashCooldown()
+    private IEnumerator DashCooldown(float currentVelocity)
     {
         yield return new WaitForSeconds(dashingTime);
         rb.useGravity = true;
         isDashing = false;
+        rb.linearVelocity = new Vector3(currentVelocity, rb.linearVelocity.y, rb.linearVelocity.z);
         yield return new WaitForSeconds(dashingCooldown);
         dashUp = true;
     }
